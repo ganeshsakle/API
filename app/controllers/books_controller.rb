@@ -8,7 +8,7 @@ class BooksController < ApplicationController
     if book.save
       render json: book, status: :created # 201
     else
-      render json: book.errors, status: :unprocessable_entity #422
+      render json: book.errors, status: :unprocessable_entity # 422
     end
   end
 
@@ -18,8 +18,12 @@ class BooksController < ApplicationController
   end
 
   def destroy
-    Book.find(params[:id]).destroy
+    Book.find(params[:id]).destroy!  # if destroy fails it raise an exception
     head :no_content
+
+  rescue ActiveRecord::RecordNotFound  # Exception handling 
+    render json: {}, status: :unprocessable_entity  # the action becomes very lengthy so we 
+                                                    # handle the exception by rescue_from 
   end
 
   private
